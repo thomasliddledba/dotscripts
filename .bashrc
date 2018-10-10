@@ -1,7 +1,3 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
-
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -40,9 +36,6 @@ case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
 esac
 
-# source scripts before prompt
-source ~/gitrepos/kube-ps1/kube-ps1.sh
-
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
@@ -50,12 +43,12 @@ source ~/gitrepos/kube-ps1/kube-ps1.sh
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+        # We have color support; assume it's compliant with Ecma-48
+        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+        # a case would tend to support setf rather than setaf.)
+        color_prompt=yes
     else
-	color_prompt=
+        color_prompt=
     fi
 fi
 
@@ -118,3 +111,37 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+source ~/github.com/kube-ps1/kube-ps1.sh
+export KUBE_PS1_SYMBOL_ENABLE=false
+export KUBECONFIG=cluster-merge:path/to/config:path/to/config
+
+unset DOCKER_TLS_VERIFY
+export DOCKER_HOST="tcp://127.0.0.1:2374"
+alias docker='docker --tls'
+
+
+
+_kube_contexts()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "- $(kubectl config get-contexts --output='name')" -- $curr_arg ) );
+}
+
+complete -F _kube_contexts kubectx kctx
+
+_kube_namespaces()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "- $(kubectl get namespaces -o=jsonpath='{range .items[*].metadata.name}{@}{"\n"}{end}')" -- $curr_arg ) );
+}
+
+complete -F _kube_namespaces kubens kns
+
+
+
+
+PS1='[\u@\h \W $(kube_ps1)]\$ '
+source <(kubectl completion bash)
