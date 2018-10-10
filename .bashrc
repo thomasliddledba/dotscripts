@@ -118,6 +118,7 @@ export KUBECONFIG=cluster-merge:path/to/config:path/to/config
 
 unset DOCKER_TLS_VERIFY
 export DOCKER_HOST="tcp://127.0.0.1:2374"
+export DOCKER_CERT_PATH=/path/docker/certs
 alias docker='docker --tls'
 
 
