@@ -119,10 +119,11 @@ parse_git_branch() {
 source ~/github.com/kube-ps1/kube-ps1.sh
 source <(helm completion bash)
 export KUBE_PS1_SYMBOL_ENABLE=false
-export KUBECONFIG=cluster-merge:~/.kube/kubeprod:~/.kube/kubelab:~/.kube/kubeuat:~/.kube/minikube
+export KUBECONFIG=cluster-merge:~/.kube/minikube
 
 unset DOCKER_TLS_VERIFY
 export DOCKER_HOST="tcp://127.0.0.1:2374"
+export DOCKER_CERT_PATH=/mnt/c/minikube
 alias docker='docker --tls'
 
 
