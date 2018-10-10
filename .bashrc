@@ -113,6 +113,7 @@ if ! shopt -oq posix; then
 fi
 
 source ~/github.com/kube-ps1/kube-ps1.sh
+source <(helm completion bash)
 export KUBE_PS1_SYMBOL_ENABLE=false
 export KUBECONFIG=cluster-merge:path/to/config:path/to/config
 
