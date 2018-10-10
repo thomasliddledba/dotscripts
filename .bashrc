@@ -112,14 +112,17 @@ if ! shopt -oq posix; then
   fi
 fi
 
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
 source ~/github.com/kube-ps1/kube-ps1.sh
 source <(helm completion bash)
 export KUBE_PS1_SYMBOL_ENABLE=false
-export KUBECONFIG=cluster-merge:path/to/config:path/to/config
+export KUBECONFIG=cluster-merge:~/.kube/kubeprod:~/.kube/kubelab:~/.kube/kubeuat:~/.kube/minikube
 
 unset DOCKER_TLS_VERIFY
 export DOCKER_HOST="tcp://127.0.0.1:2374"
-export DOCKER_CERT_PATH=/path/docker/certs
 alias docker='docker --tls'
 
 
@@ -145,5 +148,5 @@ complete -F _kube_namespaces kubens kns
 
 
 
-PS1='[\u@\h \W $(kube_ps1)]\$ '
+PS1='[$(parse_git_branch)] [\u@\h] [\W] $(kube_ps1) \n $ '
 source <(kubectl completion bash)
